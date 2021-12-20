@@ -24,10 +24,7 @@ def get_param():
     pt = solite.centre[0].wkt
 
     # Connect global spatial file from db
-    conn = psycopg2.connect(host='weu-gdt-centerline-db.postgres.database.azure.com',
-                            user='grip_ro@weu-gdt-centerline-db',
-                            password='grip_ro',
-                            database='gripdb')
+    conn = create_engine('postgresql://grip_ro@weu-gdt-centerline-db:grip_ro@weu-gdt-centerline-db.postgres.database.azure.com:5432/gripdb')
 
     # Intersect query within input point & global data
     sql = "select * FROM grip.grip_global as gbl " \
@@ -37,21 +34,23 @@ def get_param():
     gbl = gpd.read_postgis(sql, conn)
     utm = gbl['utm_zone'].iloc[0]
 
-    # EPSG API
-    url = "https://apps.epsg.org/api/v1/Conversion/"
-    zone = {'keywords': utm}  # Adding UTM zone as parameter to EPSG API
+    z = (utm[:-1])
+    if "S" in utm:
+        s = True
+    else:
+        s = False
 
-    r = requests.get(url=url, params=zone)
-    data = r.json()
+    # PYProj dict
+    crs = CRS.from_dict({'proj': 'utm', 'zone': z, 'south': s})
 
     # Get all required details
     country = gbl['name'].iloc[0]
     ccode = gbl['isocode'].iloc[0]
     server = gbl['mnr_server'].iloc[0]
     schema = gbl['mnr_schema'].iloc[0]
-    epsg = data['Results'][0]['Code']
+    ep = crs.to_authority()[1]
 
-    return country, ccode, server, schema, epsg
+    return country, ccode, server, schema, ep
 
 
 print('', get_param()[0], ' \n', get_param()[1], '\n', get_param()[2], '\n', get_param()[3], '\n', get_param()[4])
