@@ -7,9 +7,10 @@
 ########################################################################################
 
 # Import libraries / dependencies
-import psycopg2
 import geopandas as gpd
-import requests
+from sqlalchemy import create_engine
+import os
+from pyproj import CRS
 from InputReader import InputReader
 
 # File path
