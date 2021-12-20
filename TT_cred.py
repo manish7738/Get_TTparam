@@ -20,7 +20,7 @@ solite = InputReader(path)
 
 def get_param():
     # Process AOI input file
-    solite['centre'] = solite.geometry.centroid
+    solite['centre'] = solite.geometry.representative_point()
     pt = solite.centre[0].wkt
 
     # Connect global spatial file from db
