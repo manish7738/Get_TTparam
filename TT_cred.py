@@ -19,10 +19,10 @@ path = 'C:\\Manish\\Python\\PyCharmProject\\Get_cred\\Colombo_AOI.shp'
 solite = InputReader(path)
 
 
-def get_param():
+def get_param(solite_file):
     # Process AOI input file
-    solite['centre'] = solite.geometry.representative_point()
-    pt = solite.centre[0].wkt
+    solite_file['centre'] = solite_file.geometry.representative_point()
+    pt = solite_file.centre[0].wkt
 
     # Connect global spatial file from db
     conn = create_engine('postgresql://grip_ro@weu-gdt-centerline-db:grip_ro@weu-gdt-centerline-db.postgres.database.azure.com:5432/gripdb')
@@ -52,6 +52,3 @@ def get_param():
     ep = crs.to_authority()[1]
 
     return country, ccode, server, schema, ep
-
-
-print('', get_param()[0], ' \n', get_param()[1], '\n', get_param()[2], '\n', get_param()[3], '\n', get_param()[4])
